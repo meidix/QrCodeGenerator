@@ -29,6 +29,12 @@ class ExcelQrCodeGeneratorTestCase(unittest.TestCase):
             directory = os.path.join(outputs_directory, name)
             self.assertTrue(os.path.exists(directory))
 
+    def test_generationIsDoneCorrectly(self, *args, **kwargs):
+        self.generator.set_directory_name_reference('Name')
+        self.generator.generate('UID', name_column_name="Serial")
+
+
+
 
 
 
