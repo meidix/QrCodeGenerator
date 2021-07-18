@@ -1,2 +1,8 @@
 venv
 *.pyc
+
+*.xls
+*.xlsx
+*.pdf
+*.png
+*.jpeg

@@ -1,11 +1,14 @@
-import qrcode
 import sys
-# img =  qrcode.make("Hello. I Am A QRCODE")
-# img.save('qrcode.png')
+import qrcode
+
 
 def main():
-    img = qrcode.make(sys.argv[1])
-    img.save(f'{sys.argv[2]}.png')
+    """
+    generates a qr code based on the arguments it gets from the command line
+    """
+    img = qrcode.make(sys.argv[1], box_size=2)
+    img.save(f"{sys.argv[2]}.png")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
