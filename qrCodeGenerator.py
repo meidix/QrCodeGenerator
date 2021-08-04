@@ -3,7 +3,7 @@ import qrcode
 
 import os
 
-from .imageGenerator import ImageGenerator
+from imageGenerator import ImageGenerator
 
 
 class ExcelQrCodeGenerator:
@@ -45,12 +45,12 @@ class ExcelQrCodeGenerator:
         if self.directory_name_reference is None:
             raise TypeError('the directory Name Reference Column has not been set')
 
-        data_column, directory_name_column, name_column = self._prepare_columns_info(data_column_name, name_column_name)
+        data_column, directory_name_column, name_column = self.__prepare_columns_info(data_column_name, name_column_name)
 
         for i in range(len(data_column)):
-            self.__generate(data_column[i], directory_name_column[i], name_column[i], index=i)
+            self._generate(data_column[i], directory_name_column[i], name_column[i], index=i)
 
-    def _prepare_columns_info(self, data_column_name, name_column_name):
+    def __prepare_columns_info(self, data_column_name, name_column_name):
         data_column = self.file[data_column_name]
         directory_name_column = self.file[self.directory_name_reference]
 
@@ -61,7 +61,7 @@ class ExcelQrCodeGenerator:
 
         return data_column, directory_name_column, name_column
 
-    def __generate(self, data_piece, directory_name, name, index=None):
+    def _generate(self, data_piece, directory_name, name, index=None):
         code = qrcode.make(data_piece, box_size=2)
         path = os.path.join(self.outputs_directory, directory_name, f'{name}.png')
         code.save(path)
@@ -69,42 +69,44 @@ class ExcelQrCodeGenerator:
 
 class ExcelImageQrCodeGenerator(ExcelQrCodeGenerator):
 
-    def __generate(self, data_piece, directory_name, name, index):
+    def _generate(self, data_piece, directory_name, name, index):
         GTIN_column = self.file['GTIN']
-        IRC_column = self.file['IRC']
-        expire_date_column = self.file('ExpireDate')
+        LOT_column = self.file['LOT']
+        expire_date_column = self.file['ExpireDate']
         data = {
-            'GTIN': GTIN_column[index],
-            'IRC': IRC_column[index],
-            'Expire Date': expire_date_column[index]
+            'GTIN: ': str(GTIN_column[index]),
+            'LOT: ': str(LOT_column[index]),
+            'Expire Date: ': expire_date_column[index]
         }
-        code_info = self._generate_info_image(data)
+        code_info = self.__generate_info_image(data)
         code = qrcode.make(data_piece, box_size=2)
         path = os.path.join(self.outputs_directory, directory_name, f'{name}.png')
-        self._generate_final_image(code, code_info, path)
+        self.__generate_final_image(code, code_info, path)
 
-    def _generate_info_image(self, data):
+    def __generate_info_image(self, data):
         generator = ImageGenerator()
         height = 5
+        img = None
         for key, value in data.items():
             settings = {
                 'size' : (160, 58),
                 'font_file': './Aller_Bd.ttf',
                 'font_size': 10,
-                'text_position': (5, height)
+                'text_position': (5, height),
+                'image': img
             }
             img = generator.text_image(key, **settings)
             settings.update({
                 'font_file': './Aller_Lt.ttf',
-                'text_position': (5, height),
+                'text_position': (64 if key == 'Expire Date: ' else 30, height),
                 'image': img
             })
             img = generator.text_image(value, **settings)
-            height += 20
+            height += 15
 
         return img
 
-    def _generate_final_image(self, code, code_info, path):
+    def __generate_final_image(self, code, code_info, path):
         generator = ImageGenerator()
         img = generator.merge(code, code_info, direction='horizontal')
         img.save(path)

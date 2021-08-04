@@ -1,4 +1,4 @@
-from qrCodeGenerator import ExcelQrCodeGenerator
+from qrCodeGenerator import ExcelQrCodeGenerator, ExcelImageQrCodeGenerator
 from imageGenerator import ImageGenerator
 
 import pandas as pd
@@ -115,6 +115,14 @@ class ImageGeneratorTestCase(unittest.TestCase):
         self.assertEqual(final_img.size, (width, height))
         final_img.save('res2.png')
 
+
+class QrCodeImageExcelTestCase(unittest.TestCase):
+    def setUp(self):
+        self.generator = ExcelImageQrCodeGenerator(filename='test_file.xls')
+
+    def test_generation_is_done_correctly(self, *args, **kwargs):
+        self.generator.set_directory_name_reference('Name')
+        self.generator.generate('UID', name_column_name='Serial')
 
 
 
