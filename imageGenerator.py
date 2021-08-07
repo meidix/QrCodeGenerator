@@ -1,7 +1,22 @@
 from PIL import Image, ImageDraw, ImageFont
 
+import os
+
 
 class ImageGenerator:
+    font_directory = 'fonts'
+
+    def _load_font(self, font_name, font_size):
+        base_directory = os.getcwd()
+        font_directoy = os.path.join(base_directory, self.font_directory)
+        if not os.path.exists(font_directoy):
+            raise OSError("Font Directory not Found!")
+        for dirs, name, files in os.walk(font_directoy):
+            for file in files:
+                if file == font_name:
+                    font = os.path.join(font_directoy, font_name)
+                    return ImageFont.truetype(font, size=font_size)
+        return ImageFont.load_default()
 
     def text_image(self, text, **kwargs):
         mode = kwargs.setdefault('mode', 'RGB')
@@ -13,10 +28,11 @@ class ImageGenerator:
         fill = kwargs.setdefault('fill', '#000000')
         image = kwargs.setdefault('image', None)
 
-        if font_file:
-            font = ImageFont.truetype(font_file, size=font_size)
-        else:
-            font = ImageFont.load_default()
+        # if font_file:
+        #     font = ImageFont.truetype(font_file, size=font_size)
+        # else:
+        #     font = ImageFont.load_default()
+        font = self._load_font(font_file, font_size)
 
         if image:
             img = image.copy()

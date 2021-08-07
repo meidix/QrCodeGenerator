@@ -90,14 +90,14 @@ class ExcelImageQrCodeGenerator(ExcelQrCodeGenerator):
         for key, value in data.items():
             settings = {
                 'size' : (140, 58),
-                'font_file': './Aller_Bd.ttf',
+                'font_file': 'Aller_Bd.ttf',
                 'font_size': 8,
                 'text_position': (0, height),
                 'image': img
             }
             img = generator.text_image(key, **settings)
             settings.update({
-                'font_file': './Aller_Lt.ttf',
+                'font_file': 'Aller_Lt.ttf',
                 'text_position': (45 if key == 'Expire Date: ' else 21, height),
                 'image': img
             })
